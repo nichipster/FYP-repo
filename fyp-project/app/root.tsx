@@ -5,13 +5,15 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
 import "./app.css";
 import Navbar from "./components/navbar";
-import Footer from "./components/footer"
+import Footer from "./components/footer";
 import Backtotop from "./components/backtotop";
+import { publicFetch, type SiteSettings } from "./utils/api";
 
 export const links: Route.LinksFunction = () => [
   { rel: "preconnect", href: "https://fonts.googleapis.com" },
@@ -26,6 +28,11 @@ export const links: Route.LinksFunction = () => [
   },
 ];
 
+export async function loader({ request }: Route.LoaderArgs) {
+  const settings = await publicFetch<SiteSettings>("/api/settings", request);
+  return { downloadUrl: settings?.apk_url ?? null };
+}
+
 export function Layout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -35,7 +42,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body >
+      <body>
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -44,18 +51,21 @@ export function Layout({ children }: { children: React.ReactNode }) {
   );
 }
 
-{ /* This is the format for navbar -> body -> footer */ }
-export default function App() {
+export default function App({ loaderData }: Route.ComponentProps) {
+  const { downloadUrl } = loaderData;
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith("/admin");
+
   return (
     <div className="min-h-screen flex flex-col">
-      <Navbar />
+      <Navbar downloadUrl={downloadUrl ?? undefined} />
       <main className="flex-grow">
         <Outlet />
       </main>
       <Footer />
-      <Backtotop />
+      {!isAdmin && <Backtotop />}
     </div>
-  )
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {

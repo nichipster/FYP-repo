@@ -15,8 +15,11 @@ WORKDIR /app
 RUN npm run build
 
 FROM node:20-alpine
+ENV NODE_ENV=production
 COPY ./package.json package-lock.json /app/
+COPY ./express-server.mjs /app/
 COPY --from=production-dependencies-env /app/node_modules /app/node_modules
 COPY --from=build-env /app/build /app/build
 WORKDIR /app
-CMD ["npm", "run", "start"]
+EXPOSE 3000
+CMD ["node", "express-server.mjs"]
