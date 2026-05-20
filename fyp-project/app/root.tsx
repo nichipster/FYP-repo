@@ -5,6 +5,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLocation,
 } from "react-router";
 
 import type { Route } from "./+types/root";
@@ -52,6 +53,8 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App({ loaderData }: Route.ComponentProps) {
   const { downloadUrl } = loaderData;
+  const { pathname } = useLocation();
+  const isAdmin = pathname.startsWith("/admin");
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -60,7 +63,7 @@ export default function App({ loaderData }: Route.ComponentProps) {
         <Outlet />
       </main>
       <Footer />
-      <Backtotop />
+      {!isAdmin && <Backtotop />}
     </div>
   );
 }

@@ -76,6 +76,19 @@ export async function action({ request }: Route.ActionArgs) {
     return redirect(".");
   }
 
+  if (intent === "update-feature") {
+    const res = await fetch(`${API_BASE}/api/admin/plan-features/${form.get("id")}`, {
+      method: "PUT", headers: { Cookie: cookie, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        label: form.get("label"),
+        included: form.get("included") !== "false",
+        sort_order: Number(form.get("sort_order") ?? 0),
+      }),
+    });
+    if (!res.ok) return { error: "Failed to update feature." };
+    return redirect(".");
+  }
+
   if (intent === "delete-feature") {
     await fetch(`${API_BASE}/api/admin/plan-features/${form.get("id")}`, {
       method: "DELETE", headers: { Cookie: cookie },
@@ -95,6 +108,7 @@ export default function AdminPlans() {
   const [planModal, setPlanModal] = useState(false);
   const [editPlan, setEditPlan] = useState<Plan | null>(null);
   const [featureModal, setFeatureModal] = useState<Plan | null>(null);
+  const [editFeature, setEditFeature] = useState<PlanFeature | null>(null);
   const [deletePlanId, setDeletePlanId] = useState<number | null>(null);
   const [deleteFeatureId, setDeleteFeatureId] = useState<number | null>(null);
 
@@ -159,7 +173,7 @@ export default function AdminPlans() {
               ]}
               rows={plan.features}
               keyFn={(f) => f.id}
-              onEdit={() => {}}
+              onEdit={(f) => { setEditFeature(f); setFeatureModal(plan); }}
               onDelete={(f) => setDeleteFeatureId(f.id)}
               emptyMessage="No features — add one with + Feature."
             />
@@ -216,29 +230,34 @@ export default function AdminPlans() {
       </Modal>
 
       {/* Feature Modal */}
-      <Modal isOpen={!!featureModal} onClose={() => setFeatureModal(null)} title={`Add Feature to ${featureModal?.name}`}>
-        <Form method="post" onSubmit={() => setFeatureModal(null)} className="space-y-4">
-          <input type="hidden" name="_intent" value="add-feature" />
+      <Modal
+        isOpen={!!featureModal}
+        onClose={() => { setFeatureModal(null); setEditFeature(null); }}
+        title={editFeature ? "Edit Feature" : `Add Feature to ${featureModal?.name}`}
+      >
+        <Form method="post" onSubmit={() => { setFeatureModal(null); setEditFeature(null); }} className="space-y-4">
+          <input type="hidden" name="_intent" value={editFeature ? "update-feature" : "add-feature"} />
           <input type="hidden" name="plan_id" value={featureModal?.id ?? ""} />
+          {editFeature && <input type="hidden" name="id" value={editFeature.id} />}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Feature Label</label>
-            <input name="label" required className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
+            <input name="label" required defaultValue={editFeature?.label ?? ""} className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500" />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Included</label>
-              <select name="included" defaultValue="true" className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm">
+              <select name="included" defaultValue={String(editFeature?.included ?? true)} className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm">
                 <option value="true">✓ Yes</option>
                 <option value="false">✗ No</option>
               </select>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
-              <input name="sort_order" type="number" defaultValue={featureModal?.features.length ?? 0} className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm" />
+              <input name="sort_order" type="number" defaultValue={editFeature?.sort_order ?? featureModal?.features.length ?? 0} className="w-full px-3 py-2 border border-gray-200 rounded-xl text-sm" />
             </div>
           </div>
           <button type="submit" disabled={isSubmitting} className="w-full py-2 bg-green-500 text-white text-sm font-semibold rounded-xl hover:bg-green-600 transition-colors disabled:opacity-50">
-            Add Feature
+            {editFeature ? "Update Feature" : "Add Feature"}
           </button>
         </Form>
       </Modal>
