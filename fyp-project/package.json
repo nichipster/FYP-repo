@@ -5,13 +5,17 @@
   "scripts": {
     "build": "react-router build",
     "dev": "react-router dev",
-    "start": "react-router-serve ./build/server/index.js",
+    "start": "node express-server.mjs",
+    "start:rr": "react-router-serve ./build/server/index.js",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@react-router/express": "7.12.0",
     "@react-router/node": "7.12.0",
     "@react-router/serve": "7.12.0",
+    "express": "^4.21.2",
+    "http-proxy-middleware": "^3.0.3",
     "isbot": "^5.1.31",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -20,6 +24,7 @@
   "devDependencies": {
     "@react-router/dev": "7.12.0",
     "@tailwindcss/vite": "^4.1.13",
+    "@types/express": "^5.0.3",
     "@types/node": "^22",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
