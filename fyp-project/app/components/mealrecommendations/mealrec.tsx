@@ -8,7 +8,7 @@ export const foods = [
     fat: 10,
     emoji: "🍚",
     tag: "Local Favourite",
-    tagColor: "bg-emerald-100 text-emerald-700",
+    tag_color: "bg-emerald-100 text-emerald-700",
   },
   {
     name: "Nasi Lemak",
@@ -19,7 +19,7 @@ export const foods = [
     fat: 24,
     emoji: "🌿",
     tag: "Local Favourite",
-    tagColor: "bg-emerald-100 text-emerald-700",
+    tag_color: "bg-emerald-100 text-emerald-700",
   },
   {
     name: "Roti Prata",
@@ -30,7 +30,7 @@ export const foods = [
     fat: 13,
     emoji: "🫓",
     tag: "Low Calorie",
-    tagColor: "bg-blue-100 text-blue-700",
+    tag_color: "bg-blue-100 text-blue-700",
   },
   {
     name: "Salmon Don",
@@ -41,7 +41,7 @@ export const foods = [
     fat: 14,
     emoji: "🍣",
     tag: "High Protein",
-    tagColor: "bg-orange-100 text-orange-700",
+    tag_color: "bg-orange-100 text-orange-700",
   },
 ];
 

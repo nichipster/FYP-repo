@@ -74,17 +74,6 @@ export default function PlanCard({ name, price, period, highlight = false, badge
                     </li>
                 ))}
             </ul>
-
-            <NavLink
-                to="/download"
-                className={`w-full py-3 rounded-xl font-semibold text-sm transition-colors text-center ${
-                    highlight
-                        ? "bg-white text-green-600 hover:bg-green-50"
-                        : "bg-green-500 text-white hover:bg-green-600"
-                }`}
-            >
-                Get Started
-            </NavLink>
         </div>
     );
 }

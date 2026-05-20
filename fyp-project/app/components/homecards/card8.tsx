@@ -1,8 +1,13 @@
 import { useState } from "react";
-import { faqs } from "../faq/faqs";
+import type { FaqGroup } from "../../utils/api";
+import { faqs as hardcodedFaqs } from "../faq/faqs";
 
+interface Props {
+  faqs?: FaqGroup[] | null;
+}
 
-export default function Eighth() {
+export default function Eighth({ faqs }: Props) {
+  const displayFaqs = faqs ?? hardcodedFaqs;
   const [openIndex, setOpenIndex] = useState<string | null>(null);
 
   const toggle = (key: string) =>
@@ -12,7 +17,6 @@ export default function Eighth() {
     <section className="bg-green-50 py-20 px-4 font-sans">
       <div className="max-w-3xl mx-auto">
 
-        {/* ── Header ── */}
         <div className="text-center mb-12">
           <span className="inline-block bg-emerald-100 text-emerald-700 text-xs font-bold tracking-widest uppercase px-4 py-1.5 rounded-full mb-4">
             FAQs
@@ -22,17 +26,13 @@ export default function Eighth() {
           </h2>
         </div>
 
-        {/* ── FAQ Groups ── */}
         <div className="space-y-10">
-          {faqs.map((group) => (
+          {displayFaqs.map((group) => (
             <div key={group.category}>
-
-              {/* Category label */}
               <h3 className="text-xs font-bold tracking-widest uppercase text-gray-400 mb-3 ml-1">
                 {group.category}
               </h3>
 
-              {/* Items */}
               <div className="space-y-2">
                 {group.items.map((item, i) => {
                   const key = `${group.category}-${i}`;
@@ -47,24 +47,22 @@ export default function Eighth() {
                           : "border-gray-100 bg-[#f8faf9] hover:border-gray-200"
                       }`}
                     >
-                      {/* Question */}
                       <button
                         onClick={() => toggle(key)}
                         className="w-full flex items-center justify-between px-5 py-4 text-left"
                       >
                         <span className={`text-sm font-semibold ${isOpen ? "text-emerald-700" : "text-gray-800"}`}>
-                          {item.q}
+                          {item.question}
                         </span>
                         <span className={`ml-4 text-lg font-bold transition-transform ${isOpen ? "rotate-45 text-emerald-500" : "text-gray-400"}`}>
                           +
                         </span>
                       </button>
 
-                      {/* Answer */}
                       {isOpen && (
                         <div className="px-5 pb-4">
                           <p className="text-sm text-gray-500 leading-relaxed">
-                            {item.a}
+                            {item.answer}
                           </p>
                         </div>
                       )}
@@ -72,7 +70,6 @@ export default function Eighth() {
                   );
                 })}
               </div>
-
             </div>
           ))}
         </div>

@@ -1,14 +1,20 @@
 import { useState } from "react";
-import { foods, cuisineFilters } from "../mealrecommendations/mealrec";
+import type { SampleMeal } from "../../utils/api";
+import { foods as hardcodedFoods, cuisineFilters as hardcodedFilters } from "../mealrecommendations/mealrec";
 
+interface Props {
+  meals?: SampleMeal[] | null;
+}
 
-export default function RecommendedMealsSection() {
+export default function RecommendedMealsSection({ meals }: Props) {
+  const displayFoods = meals ?? hardcodedFoods;
+  const cuisines = ["All", ...Array.from(new Set(displayFoods.map((f) => f.cuisine)))];
   const [activeFilter, setActiveFilter] = useState("All");
 
   const filtered =
     activeFilter === "All"
-      ? foods
-      : foods.filter((f) => f.cuisine === activeFilter);
+      ? displayFoods
+      : displayFoods.filter((f) => f.cuisine === activeFilter);
 
   return (
     <section className="bg-white py-20 px-4 font-sans">
@@ -30,7 +36,7 @@ export default function RecommendedMealsSection() {
 
           {/* ── Filters ── */}
           <div className="flex flex-wrap gap-2">
-            {cuisineFilters.map((f) => (
+            {cuisines.map((f) => (
               <button
                 key={f}
                 onClick={() => setActiveFilter(f)}
@@ -53,27 +59,22 @@ export default function RecommendedMealsSection() {
               key={food.name}
               className="bg-[#f8faf9] rounded-2xl p-5 border border-gray-100 hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
-              {/* Emoji */}
               <div className="w-12 h-12 rounded-2xl bg-white flex items-center justify-center text-2xl mb-4 shadow-sm">
                 {food.emoji}
               </div>
 
-              {/* Tag */}
-              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${food.tagColor}`}>
+              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${food.tag_color}`}>
                 {food.tag}
               </span>
 
-              {/* Name + cuisine */}
               <h4 className="text-sm font-bold text-gray-900 mt-2">{food.name}</h4>
               <p className="text-xs text-gray-400 mb-3">{food.cuisine}</p>
 
-              {/* Calories */}
               <div className="flex items-baseline gap-1 mb-3">
                 <span className="text-2xl font-extrabold text-emerald-500">{food.calories}</span>
                 <span className="text-xs text-gray-400 font-medium">kcal</span>
               </div>
 
-              {/* Macros */}
               <div className="grid grid-cols-3 gap-1 text-center">
                 {[
                   { label: "Protein", val: food.protein, color: "text-orange-500" },
