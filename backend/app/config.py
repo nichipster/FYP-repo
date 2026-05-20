@@ -6,8 +6,14 @@ class Settings(BaseSettings):
 
     database_url: str = "postgresql://nutritrack:nutritrack_pass@localhost:5432/nutritrack"
     jwt_secret: str = "change_me_to_a_long_random_string_at_least_32_chars"
+    # Comma-separated list of allowed CORS origins, e.g.:
+    # http://localhost:3000,https://yourdomain.com,https://your-app.vercel.app
     admin_cors_origin: str = "http://localhost:3000"
     log_level: str = "info"
+
+    @property
+    def cors_origins(self) -> list[str]:
+        return [o.strip() for o in self.admin_cors_origin.split(",") if o.strip()]
 
 
 settings = Settings()
